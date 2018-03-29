@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Маргарита Еремина](https://up.htmlacademy.ru/javascript/13/user/407511).
-* Наставник: `Неизвестно`.
+* Наставник: [Иван Стрелков](https://htmlacademy.ru/profile/id427611).
 
 ---
 
