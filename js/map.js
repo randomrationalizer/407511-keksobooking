@@ -9,7 +9,6 @@ var adsCount = 8;
 var MAX_POS_Y = 500;
 var MIN_POS_Y = 150;
 var ESC_KEYCODE = 27;
-var ENTER_KEYCODE = 13;
 
 var mapElement = document.querySelector('.map');
 var mapPinsElement = mapElement.querySelector('.map__pins');
@@ -19,7 +18,7 @@ var adForm = document.querySelector('.ad-form');
 var adFormElements = document.querySelectorAll('.ad-form__element');
 var mapPinMain = mapElement.querySelector('.map__pin--main');
 var mapPinMainImg = mapPinMain.querySelector('img');
-var mapPinVerticalShift = parseInt((mapPinMainImg.height / 2), 10);
+var mapPinVerticalShift = Math.floor(mapPinMainImg.height / 2);
 var adFormAddressField = document.getElementById('address');
 
 // Функция, возваращающая случайное число в диапазоне от min до max(включительно)
@@ -37,18 +36,19 @@ var pickRandomItem = function (arr) {
 // Функция, возвращающая массив случайной длины
 var getRandomLengthArr = function (arr) {
   var randomLength = getRandomNumber(1, arr.length);
-  var randomLengthArr = arr.slice(0, randomLength); // не включая end
+  var randomLengthArr = arr.slice(0, randomLength);
   return randomLengthArr;
 };
 
 // Функция, перемешивающая элементы массива в произвольном порядке
 var shuffle = function (arr) {
+  var copiedArr = arr.slice();
   var mixedArr = [];
-  while (mixedArr.length < arr.length) {
-    var randomElem = pickRandomItem(arr);
-    if (mixedArr.indexOf(randomElem) === -1) {
-      mixedArr.push(randomElem);
-    }
+  while (copiedArr.length > 0) {
+    var randomIndex = getRandomNumber(0, copiedArr.length - 1);
+    var removedItem = copiedArr[randomIndex];
+    copiedArr.splice(randomIndex, 1);
+    mixedArr.push(removedItem);
   }
   return mixedArr;
 };
@@ -56,6 +56,7 @@ var shuffle = function (arr) {
 // Функция, создающая массив из 8 сгенерированных объектов объявлений
 var createAdsArray = function (titles, types, checkinTime, features, photos, count) {
   var adsArray = [];
+  var mixedTitles = shuffle(titles);
   for (var i = 0; i < count; i++) {
     var advertisement = {};
 
@@ -68,7 +69,7 @@ var createAdsArray = function (titles, types, checkinTime, features, photos, cou
     location.y = getRandomNumber(150, 500);
     advertisement.location = location;
     var offer = {};
-    offer.title = shuffle(titles)[i];
+    offer.title = mixedTitles[i];
     offer.address = advertisement.location.x + ', ' + advertisement.location.y;
     offer.price = getRandomNumber(1000, 1000000);
     offer.type = pickRandomItem(types);
@@ -200,16 +201,19 @@ var adFormElementsEnable = function () {
 
 // Возвращает координаты метки-кекса по X
 var getMapPinMainX = function () {
-  var mapPinX = parseInt(mapPinMain.style.left, 10) + parseInt((mapPinMainImg.width / 2), 10);
-  if (mapPinX >= mapElement.width) {
+  var mapPinX = parseInt(mapPinMain.style.left, 10) + Math.floor(mapPinMainImg.width / 2);
+  if (mapPinX > mapElement.width) {
     mapPinX = mapElement.width;
   }
   return mapPinX;
 };
 
 // Возвращает координаты метки-кекса по Y
-var getMapPinMainY = function () {
-  var mapPinMainY = parseInt(mapPinMain.style.top, 10) + parseInt(mapPinMainImg.height, 10);
+var getMapPinMainY = function (isPageActive) {
+  var mapPinMainY = parseInt(mapPinMain.style.top, 10) + mapPinMainImg.height;
+  if (!isPageActive) {
+    mapPinMainY -= mapPinVerticalShift;
+  }
   if (mapPinMainY > MAX_POS_Y) {
     mapPinMainY = MAX_POS_Y;
   } else if (mapPinMainY < MIN_POS_Y) {
@@ -219,8 +223,8 @@ var getMapPinMainY = function () {
 };
 
 // Записывает в поле адреса координаты острого конца метки-кекса (активное состояние) или центра (неактивное состояние).
-var sendMapPinMainCoordinates = function (shift) {
-  adFormAddressField.value = getMapPinMainX() + ' ,' + (getMapPinMainY() - shift);
+var sendMapPinMainCoordinates = function (isPageActive) {
+  adFormAddressField.value = getMapPinMainX() + ' ,' + getMapPinMainY(isPageActive);
 };
 
 // Блокирует поле адреса от редактирования
@@ -233,7 +237,7 @@ var pageDeactivate = function () {
   mapDeactivate();
   adFormDisable();
   adFormElementsDisable();
-  sendMapPinMainCoordinates(mapPinVerticalShift);
+  sendMapPinMainCoordinates(false);
 };
 
 // Переключает страницу в активное состояние
@@ -241,7 +245,7 @@ var pageActivate = function () {
   mapActivate();
   adFormEnable();
   adFormElementsEnable();
-  sendMapPinMainCoordinates(0);
+  sendMapPinMainCoordinates(true);
   adFormAddressFieldDisable();
   renderMapPins(adsArray);
   addPinsClickHandlers();
@@ -267,7 +271,6 @@ var openAdCard = function (evt) {
 
   var adCardClose = mapElement.querySelector('.popup__close');
   adCardClose.addEventListener('click', closeAdCard);
-  adCardClose.addEventListener('keydown', onAdCardCloseEnterPress);
   document.addEventListener('keydown', onAdCardEscPress);
 };
 
@@ -281,13 +284,6 @@ var closeAdCard = function () {
 // Закрывает попап по нажатию esc
 var onAdCardEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    closeAdCard();
-  }
-};
-
-// Закрывает попап при нажатии enter на кнопке закрытия
-var onAdCardCloseEnterPress = function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
     closeAdCard();
   }
 };
