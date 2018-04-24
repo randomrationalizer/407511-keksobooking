@@ -254,8 +254,9 @@ var pageActivate = function () {
 
 // Добавляет на все пины, кроме метки-кекса, обработчики, открывающие попап с карточой обявления
 var addPinsClickHandlers = function () {
-  for (var j = 0; j < mapPinsElement.children.length; j++) {
-    mapPinsElement.children[j].addEventListener('click', openAdCard);
+  var pins = mapPinsElement.querySelectorAll('.map__pin');
+  for (var i = 0; i < pins.length; i++) {
+    pins[i].addEventListener('click', openAdCard);
   }
   mapPinMain.removeEventListener('click', openAdCard);
 };
@@ -266,7 +267,7 @@ var openAdCard = function (evt) {
   if (adCard) {
     adCard.parentNode.removeChild(adCard);
   }
-  var clickedPinIndex = parseInt(evt.target.getAttribute('id'), 10);
+  var clickedPinIndex = parseInt(evt.currentTarget.getAttribute('id'), 10);
   renderAd(adsArray, clickedPinIndex);
 
   var adCardClose = mapElement.querySelector('.popup__close');
