@@ -17,8 +17,12 @@ var pinTemplate = document.querySelector('template').content.querySelector('.map
 var adForm = document.querySelector('.ad-form');
 var adFormElements = document.querySelectorAll('.ad-form__element');
 var mapPinMain = mapElement.querySelector('.map__pin--main');
-var mapPinMainImg = mapPinMain.querySelector('img');
-var mapPinVerticalShift = Math.floor(mapPinMainImg.height / 2);
+var mapPinMainWidth = mapPinMain.offsetWidth;
+var mapPinMainHeight = mapPinMain.offsetHeight;
+var mapPinMainNeedleHeight = 22;
+var mapPinVerticalShift = Math.floor(mapPinMainHeight / 2);
+var mapWidth = mapElement.offsetWidth;
+var mapPinMainMaxPosX = mapWidth - mapPinMainWidth;
 var adFormAddressField = document.getElementById('address');
 var adFormTitleInput = document.getElementById('title');
 var adFormPriceInput = document.getElementById('price');
@@ -208,23 +212,15 @@ var adFormElementsEnable = function () {
 
 // Возвращает координаты метки-кекса по X
 var getMapPinMainX = function () {
-  var mapPinX = parseInt(mapPinMain.style.left, 10) + Math.floor(mapPinMainImg.width / 2);
-  if (mapPinX > mapElement.width) {
-    mapPinX = mapElement.width;
-  }
+  var mapPinX = parseInt(mapPinMain.style.left, 10) + Math.floor(mapPinMainWidth / 2);
   return mapPinX;
 };
 
 // Возвращает координаты метки-кекса по Y
 var getMapPinMainY = function (isPageActive) {
-  var mapPinMainY = parseInt(mapPinMain.style.top, 10) + mapPinMainImg.height;
+  var mapPinMainY = parseInt(mapPinMain.style.top, 10) + mapPinMainHeight + mapPinMainNeedleHeight;
   if (!isPageActive) {
-    mapPinMainY -= mapPinVerticalShift;
-  }
-  if (mapPinMainY > MAX_POS_Y) {
-    mapPinMainY = MAX_POS_Y;
-  } else if (mapPinMainY < MIN_POS_Y) {
-    mapPinMainY = MIN_POS_Y;
+    mapPinMainY -= mapPinVerticalShift + mapPinMainNeedleHeight;
   }
   return mapPinMainY;
 };
@@ -236,7 +232,7 @@ var sendMapPinMainCoordinates = function (isPageActive) {
 
 // Блокирует поле адреса от редактирования
 var adFormAddressFieldReadonly = function () {
-  adFormAddressField.readonly = true;
+  adFormAddressField.setAttribute('readonly', '');
 };
 
 // Добавляет обработчик валидации для поля заголовка объявления
@@ -413,7 +409,62 @@ var onAdCardEscPress = function (evt) {
 
 // Исходное состояние страницы
 pageDeactivate();
+adFormAddressFieldReadonly();
 var adsArray = createAdsArray(ADS_TITLES, ADS_TYPES, CHECKIN_CHECKOUT, FEATURES, PHOTOS, adsCount);
 
 // Добавляет на метку-кекс обработчик события (отпускание элемента), активирующий страницу
 mapPinMain.addEventListener('mouseup', pageActivate);
+
+// Механизм перетаскивания главного пина
+mapPinMain.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMainPinMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY,
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+    checkMainPinPosition();
+    sendMapPinMainCoordinates(true);
+  };
+
+  var onMainPinMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    mapElement.removeEventListener('mousemove', onMainPinMouseMove);
+    mapElement.removeEventListener('mouseup', onMainPinMouseUp);
+  };
+
+  mapElement.addEventListener('mousemove', onMainPinMouseMove);
+  mapElement.addEventListener('mouseup', onMainPinMouseUp);
+});
+
+// Ограничивает область перетаскивания главного пина
+var checkMainPinPosition = function () {
+  var minY = MIN_POS_Y - mapPinMainHeight - mapPinMainNeedleHeight;
+  var maxY = MAX_POS_Y - mapPinMainHeight - mapPinMainNeedleHeight;
+
+  if (mapPinMain.offsetTop < minY) {
+    mapPinMain.style.top = minY + 'px';
+  } else if (mapPinMain.offsetTop > maxY) {
+    mapPinMain.style.top = maxY + 'px';
+  } else if (mapPinMain.offsetLeft < 0) {
+    mapPinMain.style.left = 0 + 'px';
+  } else if (mapPinMain.offsetLeft > mapPinMainMaxPosX) {
+    mapPinMain.style.left = mapPinMainMaxPosX + 'px';
+  }
+};
