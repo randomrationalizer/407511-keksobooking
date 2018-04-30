@@ -445,12 +445,12 @@ mapPinMain.addEventListener('mousedown', function (evt) {
 
   var onMainPinMouseUp = function (upEvt) {
     upEvt.preventDefault();
-    mapElement.removeEventListener('mousemove', onMainPinMouseMove);
-    mapElement.removeEventListener('mouseup', onMainPinMouseUp);
+    document.removeEventListener('mousemove', onMainPinMouseMove);
+    document.removeEventListener('mouseup', onMainPinMouseUp);
   };
 
-  mapElement.addEventListener('mousemove', onMainPinMouseMove);
-  mapElement.addEventListener('mouseup', onMainPinMouseUp);
+  document.addEventListener('mousemove', onMainPinMouseMove);
+  document.addEventListener('mouseup', onMainPinMouseUp);
 });
 
 // Ограничивает область перетаскивания главного пина
