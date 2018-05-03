@@ -1,6 +1,6 @@
 // Модуль, создающий DOM-элемент карточки объявления
-
 'use strict';
+
 (function () {
   var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
@@ -42,9 +42,13 @@
 
       var adPhotos = adElement.querySelector('.popup__photos');
       var adPhoto = adPhotos.querySelector('img');
-      for (var m = 0; m < advertisement.offer.photos.length - 1; m++) {
-        var adPhotoElement = adPhoto.cloneNode(true);
-        adPhotos.appendChild(adPhotoElement);
+      if (advertisement.offer.photos.length !== 0) {
+        for (var m = 0; m < advertisement.offer.photos.length - 1; m++) {
+          var adPhotoElement = adPhoto.cloneNode(true);
+          adPhotos.appendChild(adPhotoElement);
+        }
+      } else {
+        adPhotos.parentNode.removeChild(adPhotos);
       }
       for (var n = 0; n < adPhotos.children.length; n++) {
         adPhotos.children[n].src = advertisement.offer.photos[n];

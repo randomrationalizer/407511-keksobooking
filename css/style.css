@@ -1213,3 +1213,28 @@ fieldset {
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
 }
+
+.error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  padding: 30px 120px 30px 40px;
+  font-size: 40px;
+  text-align: left;
+  transform: translateX(-50%) translateY(-50%);
+  box-shadow: 0 7px 15px 0 rgba(0, 0, 0, 0.15);
+  background-color: white;
+  z-index: 6;
+}
+
+.error::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 150px;
+  height: 180px;
+  background: url('../img/error-pic.png') no-repeat 0 0;
+  background-size: 150px auto;
+}

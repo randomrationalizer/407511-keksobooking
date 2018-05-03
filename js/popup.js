@@ -1,6 +1,6 @@
 // Модуль, описывающий поведение попапа карточки объявления
-
 'use strict';
+
 (function () {
   var mapElement = document.querySelector('.map');
 
@@ -11,16 +11,9 @@
     mapElement.insertBefore(fragment, mapElement.querySelector('.map__filters-container'));
   };
 
-  // Закрывает попап с карточкой объявления, удаляет обработчик на закрытие попапа по esc
-  var closeAdCard = function () {
-    var adCard = mapElement.querySelector('.map__card');
-    adCard.parentNode.removeChild(adCard);
-    document.removeEventListener('keydown', onAdCardEscPress);
-  };
-
   // Закрывает попап по нажатию esc
   var onAdCardEscPress = function (evt) {
-    window.util.isEscEvent(evt, closeAdCard);
+    window.util.isEscEvent(evt, window.popup.closeAdCard);
   };
 
   window.popup = {
@@ -31,11 +24,20 @@
         adCard.parentNode.removeChild(adCard);
       }
       var clickedPinIndex = parseInt(evt.currentTarget.getAttribute('id'), 10);
-      renderAd(window.data.adsArray, clickedPinIndex);
+      renderAd(window.pins.adsData, clickedPinIndex);
 
       var adCardClose = mapElement.querySelector('.popup__close');
-      adCardClose.addEventListener('click', closeAdCard);
+      adCardClose.addEventListener('click', window.popup.closeAdCard);
       document.addEventListener('keydown', onAdCardEscPress);
+    },
+
+    // Закрывает попап с карточкой объявления, удаляет обработчик на закрытие попапа по esc
+    closeAdCard: function () {
+      var adCard = mapElement.querySelector('.map__card');
+      if (adCard) {
+        adCard.parentNode.removeChild(adCard);
+        document.removeEventListener('keydown', onAdCardEscPress);
+      }
     }
   };
 })();

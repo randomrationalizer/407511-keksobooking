@@ -42,6 +42,21 @@
         mixedArr.push(removedItem);
       }
       return mixedArr;
+    },
+
+    // Скрывает сообщение об ошибке
+    hideErrorMessage: function () {
+      var errorElement = document.querySelector('.error');
+      errorElement.parentNode.removeChild(errorElement);
+    },
+
+    // Отображает сообщение об ошибке
+    showErrorMessage: function (errorText) {
+      var node = document.createElement('div');
+      node.textContent = errorText;
+      node.classList.add('error');
+      document.body.insertAdjacentElement('beforeend', node);
+      setTimeout(window.util.hideErrorMessage, 2000);
     }
   };
 })();
