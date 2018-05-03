@@ -1,9 +1,13 @@
 // Модуль, описывающий механизм работы главного пина
-
 'use strict';
+
 (function () {
   var MAX_POS_Y = 500;
   var MIN_POS_Y = 150;
+  var START_POS = {
+    left: '570px',
+    top: '375px'
+  };
 
   var mapElement = document.querySelector('.map');
   var mapPinMain = mapElement.querySelector('.map__pin--main');
@@ -88,6 +92,12 @@
     // Записывает в поле адреса координаты острого конца метки-кекса (активное состояние) или центра (неактивное состояние).
     sendMapPinMainCoordinates: function (isPageActive) {
       adFormAddressField.value = getMapPinMainX() + ' ,' + getMapPinMainY(isPageActive);
+    },
+
+    // Перемещает главный пин в стартовое положение
+    resetPinMain: function () {
+      mapPinMain.style.top = START_POS.top;
+      mapPinMain.style.left = START_POS.left;
     }
   };
 })();

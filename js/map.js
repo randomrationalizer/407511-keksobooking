@@ -3,55 +3,44 @@
 
 (function () {
   var mapElement = document.querySelector('.map');
-  var mapPinsElement = mapElement.querySelector('.map__pins');
   var mapPinMain = mapElement.querySelector('.map__pin--main');
 
-  // Отрисовывает сгенерированные DOM-элементы пинов в блок .map__pins
-  var renderMapPins = function (arr) {
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < arr.length; i++) {
-      fragment.appendChild(window.pins.createPinElement(arr[i], i));
-    }
-    mapPinsElement.appendChild(fragment);
-  };
-
-  // Добавляет на все пины, кроме метки-кекса, обработчики, открывающие попап с карточой обявления
-  var addPinsClickHandlers = function () {
-    var pins = mapPinsElement.querySelectorAll('.map__pin');
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].addEventListener('click', window.popup.openAdCard);
-    }
-    mapPinMain.removeEventListener('click', window.popup.openAdCard);
-  };
-
   // Активирует карту
-  var mapActivate = function () {
+  var activateMap = function () {
     mapElement.classList.remove('map--faded');
   };
 
   // Переключает карту в неактивное состояние
-  var mapDeactivate = function () {
+  var deactivateMap = function () {
     mapElement.classList.add('map--faded');
   };
 
-  // Переключает страницу в неактивное состояние
-  var pageDeactivate = function () {
-    mapDeactivate();
-    window.form.deactivateForm();
-  };
-
   // Переключает страницу в активное состояние
-  var pageActivate = function () {
-    mapActivate();
+  var activatePage = function () {
+    activateMap();
     window.form.activateForm();
-    renderMapPins(window.data.adsArray);
-    addPinsClickHandlers();
-    mapPinMain.removeEventListener('mouseup', pageActivate);
+    window.mainpin.sendMapPinMainCoordinates(true);
+    window.backend.load(window.pins.renderMapPins, window.util.showErrorMessage);
+    mapPinMain.removeEventListener('mouseup', activatePage);
   };
 
   // Добавляет на метку-кекс обработчик события (отпускание элемента), активирующий страницу
-  mapPinMain.addEventListener('mouseup', pageActivate);
+  mapPinMain.addEventListener('mouseup', activatePage);
 
-  // Исходное неактивное состояние страницы
-  pageDeactivate();
+  window.map = {
+    // Переключает страницу в неактивное состояние
+    deactivatePage: function () {
+      deactivateMap();
+      window.form.deactivateForm();
+      window.mainpin.resetPinMain();
+      window.form.resetAdForm();
+      window.pins.deletePins();
+      window.popup.closeAdCard();
+      window.mainpin.sendMapPinMainCoordinates(false);
+      mapPinMain.addEventListener('mouseup', activatePage);
+    }
+  };
+
+  // Исходное состояние страницы
+  window.map.deactivatePage();
 })();

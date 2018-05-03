@@ -1,9 +1,10 @@
 // Модуль, работающий с формой объявления
-
 'use strict';
+
 (function () {
   var adForm = document.querySelector('.ad-form');
   var adFormElements = document.querySelectorAll('.ad-form__element');
+  var adFormReset = document.querySelector('.ad-form__reset');
   var adFormAddressField = document.getElementById('address');
   var adFormTitleInput = document.getElementById('title');
   var adFormPriceInput = document.getElementById('price');
@@ -12,33 +13,43 @@
   var adFormCheckOut = document.getElementById('timeout');
   var adFormRooms = document.getElementById('room_number');
   var adFormCapacity = document.getElementById('capacity');
+  var adFormDescription = document.getElementById('description');
+  var successMsg = document.querySelector('.success');
+
+  // Значения полей формы по умолчанию
+  var formDefaultValues = {
+    type: 'flat',
+    time: '12:00',
+    rooms: '1',
+    capacity: '1'
+  };
 
   // Убирает у элемента формы класс .ad-form--disabled
-  var adFormEnable = function () {
+  var enableForm = function () {
     adForm.classList.remove('ad-form--disabled');
   };
 
   // Добавляет элементу формы класс .ad-form--disabled
-  var adFormDisable = function () {
+  var disableForm = function () {
     adForm.classList.add('ad-form--disabled');
   };
 
   // Блокирует поля формы от редактирования
-  var adFormElementsDisable = function () {
+  var disableFormElements = function () {
     for (var i = 0; i < adFormElements.length; i++) {
       adFormElements[i].disabled = true;
     }
   };
 
   // Делает поля формы доступными для редактирования
-  var adFormElementsEnable = function () {
+  var enableFormElements = function () {
     for (var i = 0; i < adFormElements.length; i++) {
       adFormElements[i].disabled = false;
     }
   };
 
   // Блокирует поле адреса от редактирования
-  var adFormAddressFieldReadonly = function () {
+  var setAddressFieldReadonly = function () {
     adFormAddressField.setAttribute('readonly', '');
   };
 
@@ -66,7 +77,7 @@
   });
 
   // Устанавливает соответствие между типом жилья и минимальным значением цены за ночь
-  var adTypePriceMatch = function () {
+  var matchTypePrice = function () {
     if (adFormHousingType.value === 'bungalo') {
       adFormPriceInput.min = 0;
       adFormPriceInput.placeholder = 0;
@@ -83,10 +94,10 @@
   };
 
   // Добавляет обработчик на поле выбора типа жилья
-  adFormHousingType.addEventListener('change', adTypePriceMatch);
+  adFormHousingType.addEventListener('change', matchTypePrice);
 
   // Устанавливает ограничения для поля цены за ночь
-  var adPriceCheck = function (evt) {
+  var checkAdPrice = function (evt) {
     var target = evt.target;
     if (target.value < 0) {
       target.setCustomValidity('Цена не может быть меньше 0');
@@ -106,10 +117,10 @@
   };
 
   // Добавляет обработчик валидации для поля цены за ночь
-  adFormPriceInput.addEventListener('invalid', adPriceCheck);
+  adFormPriceInput.addEventListener('invalid', checkAdPrice);
 
   // Устанавливает соответствие между значениями полей чекина и чекаута
-  var adCheckinCheckoutMatch = function (evt) {
+  var matchCheckinCheckout = function (evt) {
     var target = evt.target;
     if (target === adFormCheckIn) {
       adFormCheckOut.value = target.value;
@@ -119,11 +130,11 @@
   };
 
   // Добавляет обработчики на поля чекина и чекаута
-  adFormCheckIn.addEventListener('input', adCheckinCheckoutMatch);
-  adFormCheckOut.addEventListener('input', adCheckinCheckoutMatch);
+  adFormCheckIn.addEventListener('input', matchCheckinCheckout);
+  adFormCheckOut.addEventListener('input', matchCheckinCheckout);
 
   // Задает ограничение числа гостей в зависимости от выбранного количества комнат
-  var adRoomNumberCapacityMatch = function () {
+  var checkRoomNumberCapacity = function () {
     var rooms = adFormRooms.value;
     var guests = adFormCapacity.value;
 
@@ -141,7 +152,7 @@
   };
 
   // Устанавливает соответствие между числом комнат и числом гостей
-  var adRoomsCapacityMatch = function () {
+  var matchRoomsCapacity = function () {
     if (adFormRooms.value === '100') {
       adFormCapacity.value = '0';
     } else {
@@ -150,26 +161,65 @@
   };
 
   // Добавляет обработчики на поля числа комнат и количества гостей
-  adFormRooms.addEventListener('change', adRoomNumberCapacityMatch);
-  adFormCapacity.addEventListener('change', adRoomNumberCapacityMatch);
+  adFormRooms.addEventListener('change', checkRoomNumberCapacity);
+  adFormCapacity.addEventListener('change', checkRoomNumberCapacity);
 
-  adTypePriceMatch();
-  adRoomsCapacityMatch();
-  adFormAddressFieldReadonly();
+  matchTypePrice();
+  matchRoomsCapacity();
+  setAddressFieldReadonly();
+
+  // Показывает сообщение об успешной отправке формы
+  var onSuccess = function () {
+    successMsg.classList.remove('hidden');
+    window.map.deactivatePage();
+    setTimeout(hideSuccessMsg, 1300);
+  };
+
+  // Скрывает сообщение об успешной отправке формы
+  var hideSuccessMsg = function () {
+    successMsg.classList.add('hidden');
+  };
+
+  // Отправляет данные формы на сервер
+  var onAdFormSubmit = function (evt) {
+    window.backend.upload(new FormData(adForm), onSuccess, window.util.showErrorMessage);
+    evt.preventDefault();
+  };
+
+  // Добавляет обработчик события отправки формы
+  adForm.addEventListener('submit', onAdFormSubmit);
 
   window.form = {
     // Переключает форму в активное состояние
     activateForm: function () {
-      adFormEnable();
-      adFormElementsEnable();
-      window.mainpin.sendMapPinMainCoordinates(true);
+      enableForm();
+      enableFormElements();
+      adFormReset.addEventListener('click', window.map.deactivatePage);
     },
 
     // Переключает форму в неактивное состояние
     deactivateForm: function () {
-      adFormDisable();
-      adFormElementsDisable();
-      window.mainpin.sendMapPinMainCoordinates(false);
+      disableForm();
+      disableFormElements();
+      adFormReset.removeEventListener('click', window.map.deactivatePage);
+    },
+
+    // Сбрасывает введенные значения полей формы
+    resetAdForm: function () {
+      var inputs = adForm.querySelectorAll('input');
+      inputs.forEach(function (item) {
+        if (item.type !== 'checkbox') {
+          item.value = '';
+        } else {
+          item.checked = false;
+        }
+      });
+      adFormHousingType.value = formDefaultValues.type;
+      adFormCheckIn.value = formDefaultValues.time;
+      adFormCheckOut.value = formDefaultValues.time;
+      adFormRooms.value = formDefaultValues.rooms;
+      adFormCapacity.value = formDefaultValues.capacity;
+      adFormDescription.value = '';
     }
   };
 })();
