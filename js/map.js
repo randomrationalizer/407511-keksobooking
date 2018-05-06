@@ -20,9 +20,7 @@
     activateMap();
     window.form.activateForm();
     window.mainpin.sendMapPinMainCoordinates(true);
-    window.pins.renderMapPins(window.pins.adsData);
-    window.pins.hidePins();
-    window.pins.showPins(window.pins.adsData, window.pins.adsData);
+    window.backend.load(window.pins.createdAdsData, window.util.showErrorMessage);
     mapPinMain.removeEventListener('mouseup', activatePage);
   };
 

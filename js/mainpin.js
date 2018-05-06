@@ -65,10 +65,12 @@
 
     var onMainPinMouseUp = function (upEvt) {
       upEvt.preventDefault();
+      mapPinMain.blur();
       document.removeEventListener('mousemove', onMainPinMouseMove);
       document.removeEventListener('mouseup', onMainPinMouseUp);
     };
 
+    mapPinMain.focus();
     document.addEventListener('mousemove', onMainPinMouseMove);
     document.addEventListener('mouseup', onMainPinMouseUp);
   });

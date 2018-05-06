@@ -30,14 +30,6 @@
     mapPinMain.removeEventListener('click', window.popup.openAdCard);
   };
 
-  // Сохраняет загруженный с сервера массив объявлений в переменую adsData
-  var createdAdsData = function (data) {
-    window.pins.adsData = data;
-  };
-
-  // Загружает с сервера данные объявлений
-  window.backend.load(createdAdsData, window.util.showErrorMessage);
-
   window.pins = {
     // В этот массив добавляются загруженные с сервера данные объявлений
     adsData: [],
@@ -85,6 +77,14 @@
           }
         });
       });
-    }
+    },
+
+    // Сохраняет загруженный с сервера массив объявлений, отображает пины
+    createdAdsData: function (data) {
+      window.pins.renderMapPins(data);
+      window.pins.adsData = data;
+      window.pins.hidePins();
+      window.pins.showPins(window.pins.adsData, window.pins.adsData);
+    },
   };
 })();
