@@ -43,15 +43,11 @@
     var ads = window.pins.adsData.slice();
 
     var filteredAds = ads.filter(function (it) {
-      return checkOfferPrice(it.offer.price, selectedPrice);
-    }).filter(function (it) {
-      return checkOfferFeatures(it.offer.features, selectedFeatures);
-    }).filter(function (it) {
-      return chekOfferValue(it.offer.type, selectedType);
-    }).filter(function (it) {
-      return chekOfferValue(it.offer.rooms, selectedRooms);
-    }).filter(function (it) {
-      return chekOfferValue(it.offer.guests, selectedGuests);
+      return checkOfferPrice(it.offer.price, selectedPrice) &&
+        checkOfferFeatures(it.offer.features, selectedFeatures) &&
+        chekOfferValue(it.offer.type, selectedType) &&
+        chekOfferValue(it.offer.rooms, selectedRooms) &&
+        chekOfferValue(it.offer.guests, selectedGuests);
     });
 
     window.popup.closeAdCard();
@@ -136,20 +132,7 @@
 
   // Условие фильтрации объявлений по значением select фильтров
   var chekOfferValue = function (property, selectedField) {
-    var result;
-
-    switch (selectedField) {
-      case 'any':
-        result = true;
-        break;
-      case property:
-        result = true;
-        break;
-      default:
-        result = false;
-        break;
-    }
-    return result;
+    return selectedField === 'any' || selectedField === property;
   };
 
   // Выбранное значение фильтра типа жилья
