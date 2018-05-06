@@ -38,15 +38,14 @@
       var adPhotos = adElement.querySelector('.popup__photos');
       var adPhoto = adPhotos.querySelector('img');
       if (advertisement.offer.photos.length !== 0) {
-        for (var m = 0; m < advertisement.offer.photos.length - 1; m++) {
+        adPhotos.innerHTML = '';
+        for (var k = 0; k < advertisement.offer.photos.length; k++) {
           var adPhotoElement = adPhoto.cloneNode(true);
+          adPhotoElement.src = advertisement.offer.photos[k];
           adPhotos.appendChild(adPhotoElement);
         }
       } else {
         adPhotos.parentNode.removeChild(adPhotos);
-      }
-      for (var n = 0; n < adPhotos.children.length; n++) {
-        adPhotos.children[n].src = advertisement.offer.photos[n];
       }
 
       adElement.querySelector('.popup__avatar').src = advertisement.author.avatar;

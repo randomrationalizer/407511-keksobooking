@@ -45,9 +45,9 @@
     var filteredAds = ads.filter(function (it) {
       return checkOfferPrice(it.offer.price, selectedPrice) &&
         checkOfferFeatures(it.offer.features, selectedFeatures) &&
-        chekOfferValue(it.offer.type, selectedType) &&
-        chekOfferValue(it.offer.rooms, selectedRooms) &&
-        chekOfferValue(it.offer.guests, selectedGuests);
+        checkOfferValue(it.offer.type, selectedType) &&
+        checkOfferValue(it.offer.rooms, selectedRooms) &&
+        checkOfferValue(it.offer.guests, selectedGuests);
     });
 
     window.popup.closeAdCard();
@@ -70,17 +70,25 @@
     var result;
     switch (fieldValue) {
       case 'low':
+      {
         result = price < 10000;
         break;
+      }
       case 'middle':
+      {
         result = price >= 10000 && price <= 50000;
         break;
+      }
       case 'high':
+      {
         result = price > 50000;
         break;
+      }
       case 'any':
+      {
         result = true;
         break;
+      }
     }
     return result;
   };
@@ -131,7 +139,7 @@
   addFilterCheckboxHandlers();
 
   // Условие фильтрации объявлений по значением select фильтров
-  var chekOfferValue = function (property, selectedField) {
+  var checkOfferValue = function (property, selectedField) {
     return selectedField === 'any' || selectedField === property;
   };
 
@@ -154,7 +162,7 @@
   // Записывает значение выбранного количества комнат в переменную selectedRooms и обновляет пины
   var onRoomsChange = window.util.debounce(function (evt) {
     var target = evt.target;
-    if (typeof target.value !== 'number' && target.value !== 'any') {
+    if (target.value !== 'any') {
       selectedRooms = parseInt(target.value, 10);
     } else {
       selectedRooms = target.value;

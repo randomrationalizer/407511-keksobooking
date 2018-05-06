@@ -35,10 +35,10 @@
     adsData: [],
 
     // Отрисовывает сгенерированные DOM-элементы пинов в блок .map__pins
-    renderMapPins: function (data) {
+    renderMapPins: function (advertisements) {
       var fragment = document.createDocumentFragment();
-      for (var i = 0; i < data.length; i++) {
-        fragment.appendChild(createPinElement(data[i], i));
+      for (var i = 0; i < advertisements.length; i++) {
+        fragment.appendChild(createPinElement(advertisements[i], i));
       }
       mapPinsElement.appendChild(fragment);
 
@@ -64,15 +64,15 @@
     },
 
     // Отображает пины при фильтрации
-    showPins: function (resultArr, originArr) {
+    showPins: function (showedAds, originalAds) {
       var pins = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
-      if (resultArr.length > PINS_COUNT) {
-        resultArr = resultArr.slice(0, PINS_COUNT);
+      if (showedAds.length > PINS_COUNT) {
+        showedAds = showedAds.slice(0, PINS_COUNT);
       }
-      resultArr.forEach(function (ad) {
+      showedAds.forEach(function (ad) {
         pins.forEach(function (pin) {
           var pinIndex = parseInt(pin.getAttribute('id'), 10);
-          if (originArr.indexOf(ad) === pinIndex) {
+          if (originalAds.indexOf(ad) === pinIndex) {
             pin.classList.remove('hidden');
           }
         });
@@ -80,9 +80,9 @@
     },
 
     // Сохраняет загруженный с сервера массив объявлений, отображает пины
-    createdAdsData: function (data) {
-      window.pins.renderMapPins(data);
-      window.pins.adsData = data;
+    createdAdsData: function (uploadedAds) {
+      window.pins.renderMapPins(uploadedAds);
+      window.pins.adsData = uploadedAds;
       window.pins.hidePins();
       window.pins.showPins(window.pins.adsData, window.pins.adsData);
     },

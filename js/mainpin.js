@@ -4,6 +4,7 @@
 (function () {
   var MAX_POS_Y = 500;
   var MIN_POS_Y = 150;
+  var MAIN_PIN_NEEDLE_HEIGHT = 22;
   var START_POS = {
     left: '570px',
     top: '375px'
@@ -15,7 +16,7 @@
   var adFormAddressField = adForm.querySelector('#address');
   var mapPinMainWidth = mapPinMain.offsetWidth;
   var mapPinMainHeight = mapPinMain.offsetHeight;
-  var mapPinMainNeedleHeight = 22;
+
   var mapPinVerticalShift = Math.floor(mapPinMainHeight / 2);
   var mapWidth = mapElement.offsetWidth;
   var mapPinMainMaxPosX = mapWidth - mapPinMainWidth;
@@ -28,9 +29,9 @@
 
   // Возвращает координаты метки-кекса по Y
   var getMapPinMainY = function (isPageActive) {
-    var mapPinMainY = parseInt(mapPinMain.style.top, 10) + mapPinMainHeight + mapPinMainNeedleHeight;
+    var mapPinMainY = parseInt(mapPinMain.style.top, 10) + mapPinMainHeight + MAIN_PIN_NEEDLE_HEIGHT;
     if (!isPageActive) {
-      mapPinMainY -= mapPinVerticalShift + mapPinMainNeedleHeight;
+      mapPinMainY -= mapPinVerticalShift + MAIN_PIN_NEEDLE_HEIGHT;
     }
     return mapPinMainY;
   };
@@ -77,8 +78,8 @@
 
   // Ограничивает область перетаскивания главного пина
   var checkMainPinPosition = function () {
-    var minY = MIN_POS_Y - mapPinMainHeight - mapPinMainNeedleHeight;
-    var maxY = MAX_POS_Y - mapPinMainHeight - mapPinMainNeedleHeight;
+    var minY = MIN_POS_Y - mapPinMainHeight - MAIN_PIN_NEEDLE_HEIGHT;
+    var maxY = MAX_POS_Y - mapPinMainHeight - MAIN_PIN_NEEDLE_HEIGHT;
 
     if (mapPinMain.offsetTop < minY) {
       mapPinMain.style.top = minY + 'px';
