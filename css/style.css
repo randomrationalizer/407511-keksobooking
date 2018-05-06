@@ -1222,8 +1222,11 @@ fieldset {
   padding: 30px 120px 30px 40px;
   font-size: 40px;
   text-align: left;
-  transform: translateX(-50%) translateY(-50%);
-  box-shadow: 0 7px 15px 0 rgba(0, 0, 0, 0.15);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+      -ms-transform: translateX(-50%) translateY(-50%);
+          transform: translateX(-50%) translateY(-50%);
+  -webkit-box-shadow: 0 7px 15px 0 rgba(0, 0, 0, 0.15);
+          box-shadow: 0 7px 15px 0 rgba(0, 0, 0, 0.15);
   background-color: white;
   z-index: 6;
 }

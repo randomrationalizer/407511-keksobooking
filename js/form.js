@@ -3,25 +3,58 @@
 
 (function () {
   var adForm = document.querySelector('.ad-form');
-  var adFormElements = document.querySelectorAll('.ad-form__element');
-  var adFormReset = document.querySelector('.ad-form__reset');
-  var adFormAddressField = document.getElementById('address');
-  var adFormTitleInput = document.getElementById('title');
-  var adFormPriceInput = document.getElementById('price');
-  var adFormHousingType = document.getElementById('type');
-  var adFormCheckIn = document.getElementById('timein');
-  var adFormCheckOut = document.getElementById('timeout');
-  var adFormRooms = document.getElementById('room_number');
-  var adFormCapacity = document.getElementById('capacity');
-  var adFormDescription = document.getElementById('description');
+  var adFormElements = adForm.querySelectorAll('.ad-form__element');
+  var adFormReset = adForm.querySelector('.ad-form__reset');
+  var adFormAddressField = adForm.querySelector('#address');
+  var adFormTitleInput = adForm.querySelector('#title');
+  var adFormPriceInput = adForm.querySelector('#price');
+  var adFormHousingType = adForm.querySelector('#type');
+  var adFormCheckIn = adForm.querySelector('#timein');
+  var adFormCheckOut = adForm.querySelector('#timeout');
+  var adFormRooms = adForm.querySelector('#room_number');
+  var adFormCapacity = adForm.querySelector('#capacity');
+  var adFormDescription = adForm.querySelector('#description');
+  var adFormCheckboxes = adForm.querySelectorAll('checkbox');
+  var adFormInputs = adForm.querySelectorAll('input');
+  var adFormSelects = adForm.querySelectorAll('select');
   var successMsg = document.querySelector('.success');
 
   // Значения полей формы по умолчанию
   var formDefaultValues = {
-    type: 'flat',
-    time: '12:00',
-    rooms: '1',
-    capacity: '1'
+    'title': '',
+    'type': 'flat',
+    'price': '',
+    'timein': '12:00',
+    'timeout': '12:00',
+    'room_number': '1',
+    'capacity': '1',
+    'feature-wifi': false,
+    'feature-dishwasher': false,
+    'feature-parking': false,
+    'feature-washer': false,
+    'feature-elevator': false,
+    'feature-conditioner': false,
+    'description': ''
+  };
+
+  // Ограничения для поля цены в зависимости от типа жилья
+  var typeToPrice = {
+    'bungalo': {
+      min: 0,
+      placeholder: 0
+    },
+    'flat': {
+      min: 1000,
+      placeholder: 1000
+    },
+    'house': {
+      min: 5000,
+      placeholder: 5000
+    },
+    'palace': {
+      min: 10000,
+      placeholder: 10000
+    },
   };
 
   // Убирает у элемента формы класс .ad-form--disabled
@@ -36,16 +69,16 @@
 
   // Блокирует поля формы от редактирования
   var disableFormElements = function () {
-    for (var i = 0; i < adFormElements.length; i++) {
-      adFormElements[i].disabled = true;
-    }
+    adFormElements.forEach(function (elem) {
+      elem.disabled = true;
+    });
   };
 
   // Делает поля формы доступными для редактирования
   var enableFormElements = function () {
-    for (var i = 0; i < adFormElements.length; i++) {
-      adFormElements[i].disabled = false;
-    }
+    adFormElements.forEach(function (elem) {
+      elem.disabled = false;
+    });
   };
 
   // Блокирует поле адреса от редактирования
@@ -78,19 +111,8 @@
 
   // Устанавливает соответствие между типом жилья и минимальным значением цены за ночь
   var matchTypePrice = function () {
-    if (adFormHousingType.value === 'bungalo') {
-      adFormPriceInput.min = 0;
-      adFormPriceInput.placeholder = 0;
-    } else if (adFormHousingType.value === 'flat') {
-      adFormPriceInput.min = 1000;
-      adFormPriceInput.placeholder = 1000;
-    } else if (adFormHousingType.value === 'house') {
-      adFormPriceInput.min = 5000;
-      adFormPriceInput.placeholder = 5000;
-    } else if (adFormHousingType.value === 'palace') {
-      adFormPriceInput.min = 10000;
-      adFormPriceInput.placeholder = 10000;
-    }
+    adFormPriceInput.min = typeToPrice[adFormHousingType.value].min;
+    adFormPriceInput.placeholder = typeToPrice[adFormHousingType.value].placeholder;
   };
 
   // Добавляет обработчик на поле выбора типа жилья
@@ -168,16 +190,28 @@
   matchRoomsCapacity();
   setAddressFieldReadonly();
 
+  // Сбрасывает значения полей формы на значения по умолчанию
+  var resetFormFields = function (fields) {
+    fields.forEach(function (field) {
+      if (field.type === 'checkbox') {
+        field.checked = formDefaultValues[field.id];
+      } else if (field.type !== 'file') {
+        field.value = formDefaultValues[field.id];
+      }
+    });
+  };
+
   // Показывает сообщение об успешной отправке формы
   var onSuccess = function () {
     successMsg.classList.remove('hidden');
     window.map.deactivatePage();
-    setTimeout(hideSuccessMsg, 1300);
+    successMsg.addEventListener('click', hideSuccessMsg);
   };
 
   // Скрывает сообщение об успешной отправке формы
   var hideSuccessMsg = function () {
     successMsg.classList.add('hidden');
+    successMsg.removeEventListener('click', hideSuccessMsg);
   };
 
   // Отправляет данные формы на сервер
@@ -206,20 +240,10 @@
 
     // Сбрасывает введенные значения полей формы
     resetAdForm: function () {
-      var inputs = adForm.querySelectorAll('input');
-      inputs.forEach(function (item) {
-        if (item.type !== 'checkbox') {
-          item.value = '';
-        } else {
-          item.checked = false;
-        }
-      });
-      adFormHousingType.value = formDefaultValues.type;
-      adFormCheckIn.value = formDefaultValues.time;
-      adFormCheckOut.value = formDefaultValues.time;
-      adFormRooms.value = formDefaultValues.rooms;
-      adFormCapacity.value = formDefaultValues.capacity;
-      adFormDescription.value = '';
+      resetFormFields(adFormCheckboxes);
+      resetFormFields(adFormInputs);
+      resetFormFields(adFormSelects);
+      adFormDescription.value = formDefaultValues[adFormDescription.id];
     }
   };
 })();

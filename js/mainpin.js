@@ -11,7 +11,8 @@
 
   var mapElement = document.querySelector('.map');
   var mapPinMain = mapElement.querySelector('.map__pin--main');
-  var adFormAddressField = document.getElementById('address');
+  var adForm = document.querySelector('.ad-form');
+  var adFormAddressField = adForm.querySelector('#address');
   var mapPinMainWidth = mapPinMain.offsetWidth;
   var mapPinMainHeight = mapPinMain.offsetHeight;
   var mapPinMainNeedleHeight = 22;

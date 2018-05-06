@@ -3,6 +3,8 @@
 'use strict';
 (function () {
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 500;
+  var lastTimeout;
 
   window.util = {
     // Обработчик события по нажатию esc
@@ -57,6 +59,21 @@
       node.classList.add('error');
       document.body.insertAdjacentElement('beforeend', node);
       setTimeout(window.util.hideErrorMessage, 2000);
+    },
+
+    // Функция устранения 'дребезга'
+    debounce: function (fun) {
+      lastTimeout = null;
+
+      return function () {
+        var args = arguments;
+        if (lastTimeout) {
+          window.clearTimeout(lastTimeout);
+        }
+        lastTimeout = window.setTimeout(function () {
+          fun.apply(null, args);
+        }, DEBOUNCE_INTERVAL);
+      };
     }
   };
 })();
