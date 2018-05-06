@@ -4,6 +4,13 @@
 (function () {
   var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
 
+  var adTypeToValue = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
+
   window.card = {
     // Создает DOM-элемент объявления на основе шаблона .map__card и элемента из массива объявлений
     createAdElement: function (advertisement) {
@@ -11,19 +18,7 @@
       adElement.querySelector('.popup__title').textContent = advertisement.offer.title;
       adElement.querySelector('.popup__text--address').textContent = advertisement.offer.address;
       adElement.querySelector('.popup__text--price').textContent = advertisement.offer.price + '₽/ночь';
-
-      var adType = '';
-      if (advertisement.offer.type === 'flat') {
-        adType = 'Квартира';
-      } else if (advertisement.offer.type === 'bungalo') {
-        adType = 'Бунгало';
-      } else if (advertisement.offer.type === 'house') {
-        adType = 'Дом';
-      } else {
-        adType = 'Дворец';
-      }
-      adElement.querySelector('.popup__type').textContent = adType;
-
+      adElement.querySelector('.popup__type').textContent = adTypeToValue[advertisement.offer.type];
       adElement.querySelector('.popup__text--capacity').textContent = advertisement.offer.rooms + ' комнаты для ' + advertisement.offer.guests + ' гостей';
       adElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisement.offer.checkin + ' , выезд до ' + advertisement.offer.checkout;
 
