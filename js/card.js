@@ -39,9 +39,9 @@
       var adPhoto = adPhotos.querySelector('img');
       if (advertisement.offer.photos.length !== 0) {
         adPhotos.innerHTML = '';
-        for (var m = 0; m < advertisement.offer.photos.length; m++) {
+        for (var k = 0; k < advertisement.offer.photos.length; k++) {
           var adPhotoElement = adPhoto.cloneNode(true);
-          adPhotoElement.src = advertisement.offer.photos[m];
+          adPhotoElement.src = advertisement.offer.photos[k];
           adPhotos.appendChild(adPhotoElement);
         }
       } else {
