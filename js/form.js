@@ -119,27 +119,27 @@
   adFormHousingType.addEventListener('change', matchTypePrice);
 
   // Устанавливает ограничения для поля цены за ночь
-  var checkAdPrice = function (evt) {
-    var target = evt.target;
-    if (target.value < 0) {
-      target.setCustomValidity('Цена не может быть меньше 0');
+  var checkAdPrice = function () {
+    if (adFormPriceInput.value < 0) {
+      adFormPriceInput.setCustomValidity('Цена не может быть меньше 0');
     } else if (adFormPriceInput.validity.valueMissing) {
-      target.setCustomValidity('Обязательно для заполения');
-    } else if (target.value < 1000 && adFormHousingType.value === 'flat') {
-      target.setCustomValidity('Цена для квартиры не может быть меньше 1000 за ночь');
-    } else if (target.value < 5000 && adFormHousingType.value === 'house') {
-      target.setCustomValidity('Цена для дома не может быть меньше 5000 за ночь');
-    } else if (target.value < 10000 && adFormHousingType.value === 'palace') {
-      target.setCustomValidity('Цена для дворца не может быть меньше 10000 за ночь');
+      adFormPriceInput.setCustomValidity('Обязательно для заполения');
+    } else if (adFormPriceInput.value < 1000 && adFormHousingType.value === 'flat') {
+      adFormPriceInput.setCustomValidity('Цена для квартиры не может быть меньше 1000 за ночь');
+    } else if (adFormPriceInput.value < 5000 && adFormHousingType.value === 'house') {
+      adFormPriceInput.setCustomValidity('Цена для дома не может быть меньше 5000 за ночь');
+    } else if (adFormPriceInput.value < 10000 && adFormHousingType.value === 'palace') {
+      adFormPriceInput.setCustomValidity('Цена для дворца не может быть меньше 10000 за ночь');
     } else if (adFormPriceInput.validity.rangeOverflow) {
-      target.setCustomValidity('Максимальная цена - 1 000 000');
+      adFormPriceInput.setCustomValidity('Максимальная цена - 1 000 000');
     } else {
-      target.setCustomValidity('');
+      adFormPriceInput.setCustomValidity('');
     }
   };
 
   // Добавляет обработчик валидации для поля цены за ночь
-  adFormPriceInput.addEventListener('invalid', checkAdPrice);
+  adFormPriceInput.addEventListener('input', checkAdPrice);
+  adFormHousingType.addEventListener('change', checkAdPrice);
 
   // Устанавливает соответствие между значениями полей чекина и чекаута
   var matchCheckinCheckout = function (evt) {
