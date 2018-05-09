@@ -11,33 +11,33 @@
   };
 
   var mapElement = document.querySelector('.map');
-  var mapPinMain = mapElement.querySelector('.map__pin--main');
-  var adForm = document.querySelector('.ad-form');
-  var adFormAddressField = adForm.querySelector('#address');
-  var mapPinMainWidth = mapPinMain.offsetWidth;
-  var mapPinMainHeight = mapPinMain.offsetHeight;
+  var mainPinElement = mapElement.querySelector('.map__pin--main');
+  var adFormElement = document.querySelector('.ad-form');
+  var adFormAddressElement = adFormElement.querySelector('#address');
+  var mainPinWidth = mainPinElement.offsetWidth;
+  var mainPinHeight = mainPinElement.offsetHeight;
 
-  var mapPinVerticalShift = Math.floor(mapPinMainHeight / 2);
+  var mainPinVerticalShift = Math.floor(mainPinHeight / 2);
   var mapWidth = mapElement.offsetWidth;
-  var mapPinMainMaxPosX = mapWidth - mapPinMainWidth;
+  var mainPinMaxPosX = mapWidth - mainPinWidth;
 
   // Возвращает координаты метки-кекса по X
-  var getMapPinMainX = function () {
-    var mapPinX = parseInt(mapPinMain.style.left, 10) + Math.floor(mapPinMainWidth / 2);
-    return mapPinX;
+  var getMainPinX = function () {
+    var mainPinX = parseInt(mainPinElement.style.left, 10) + Math.floor(mainPinWidth / 2);
+    return mainPinX;
   };
 
   // Возвращает координаты метки-кекса по Y
-  var getMapPinMainY = function (isPageActive) {
-    var mapPinMainY = parseInt(mapPinMain.style.top, 10) + mapPinMainHeight + MAIN_PIN_NEEDLE_HEIGHT;
+  var getMainPinY = function (isPageActive) {
+    var mainPinY = parseInt(mainPinElement.style.top, 10) + mainPinHeight + MAIN_PIN_NEEDLE_HEIGHT;
     if (!isPageActive) {
-      mapPinMainY -= mapPinVerticalShift + MAIN_PIN_NEEDLE_HEIGHT;
+      mainPinY -= mainPinVerticalShift + MAIN_PIN_NEEDLE_HEIGHT;
     }
-    return mapPinMainY;
+    return mainPinY;
   };
 
   // Добавляет на метку-кекс обработчик события перетаскивания главного пина
-  mapPinMain.addEventListener('mousedown', function (evt) {
+  mainPinElement.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     var startCoords = {
@@ -58,50 +58,50 @@
         y: moveEvt.clientY
       };
 
-      mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-      mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+      mainPinElement.style.top = (mainPinElement.offsetTop - shift.y) + 'px';
+      mainPinElement.style.left = (mainPinElement.offsetLeft - shift.x) + 'px';
       checkMainPinPosition();
-      window.mainpin.sendMapPinMainCoordinates(true);
+      window.mainpin.sendCoordinates(true);
     };
 
     var onMainPinMouseUp = function (upEvt) {
       upEvt.preventDefault();
-      mapPinMain.blur();
+      mainPinElement.blur();
       document.removeEventListener('mousemove', onMainPinMouseMove);
       document.removeEventListener('mouseup', onMainPinMouseUp);
     };
 
-    mapPinMain.focus();
+    mainPinElement.focus();
     document.addEventListener('mousemove', onMainPinMouseMove);
     document.addEventListener('mouseup', onMainPinMouseUp);
   });
 
   // Ограничивает область перетаскивания главного пина
   var checkMainPinPosition = function () {
-    var minY = MIN_POS_Y - mapPinMainHeight - MAIN_PIN_NEEDLE_HEIGHT;
-    var maxY = MAX_POS_Y - mapPinMainHeight - MAIN_PIN_NEEDLE_HEIGHT;
+    var minY = MIN_POS_Y - mainPinHeight - MAIN_PIN_NEEDLE_HEIGHT;
+    var maxY = MAX_POS_Y - mainPinHeight - MAIN_PIN_NEEDLE_HEIGHT;
 
-    if (mapPinMain.offsetTop < minY) {
-      mapPinMain.style.top = minY + 'px';
-    } else if (mapPinMain.offsetTop > maxY) {
-      mapPinMain.style.top = maxY + 'px';
-    } else if (mapPinMain.offsetLeft < 0) {
-      mapPinMain.style.left = 0 + 'px';
-    } else if (mapPinMain.offsetLeft > mapPinMainMaxPosX) {
-      mapPinMain.style.left = mapPinMainMaxPosX + 'px';
+    if (mainPinElement.offsetTop < minY) {
+      mainPinElement.style.top = minY + 'px';
+    } else if (mainPinElement.offsetTop > maxY) {
+      mainPinElement.style.top = maxY + 'px';
+    } else if (mainPinElement.offsetLeft < 0) {
+      mainPinElement.style.left = 0 + 'px';
+    } else if (mainPinElement.offsetLeft > mainPinMaxPosX) {
+      mainPinElement.style.left = mainPinMaxPosX + 'px';
     }
   };
 
   window.mainpin = {
     // Записывает в поле адреса координаты острого конца метки-кекса (активное состояние) или центра (неактивное состояние).
-    sendMapPinMainCoordinates: function (isPageActive) {
-      adFormAddressField.value = getMapPinMainX() + ' ,' + getMapPinMainY(isPageActive);
+    sendCoordinates: function (isPageActive) {
+      adFormAddressElement.value = getMainPinX() + ' ,' + getMainPinY(isPageActive);
     },
 
     // Перемещает главный пин в стартовое положение
-    resetPinMain: function () {
-      mapPinMain.style.top = START_POS.top;
-      mapPinMain.style.left = START_POS.left;
+    reset: function () {
+      mainPinElement.style.top = START_POS.top;
+      mainPinElement.style.left = START_POS.left;
     }
   };
 })();

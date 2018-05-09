@@ -5,37 +5,37 @@
   var mapElement = document.querySelector('.map');
 
   // Отрисовывает сгенерированный DOM-элемент карточки объявления в блок .map перед .map__filters-container
-  var renderAd = function (arr, adIndex) {
+  var renderCard = function (cards, cardIndex) {
     var fragment = document.createDocumentFragment();
-    fragment.appendChild(window.card.createAdElement(arr[adIndex]));
+    fragment.appendChild(window.card.create(cards[cardIndex]));
     mapElement.insertBefore(fragment, mapElement.querySelector('.map__filters-container'));
   };
 
   // Закрывает попап по нажатию esc
   var onAdCardEscPress = function (evt) {
-    window.util.isEscEvent(evt, window.popup.closeAdCard);
+    window.util.isEscEvent(evt, window.popup.close);
   };
 
   window.popup = {
     // Открывает попап с карточкой объявления, добавляет обработчики на закрытие по esc и enter
-    openAdCard: function (evt) {
-      var adCard = mapElement.querySelector('.map__card');
-      if (adCard) {
-        adCard.parentNode.removeChild(adCard);
+    open: function (evt) {
+      var cardElement = mapElement.querySelector('.map__card');
+      if (cardElement) {
+        cardElement.parentNode.removeChild(cardElement);
       }
       var clickedPinIndex = parseInt(evt.currentTarget.getAttribute('id'), 10);
-      renderAd(window.pins.adsData, clickedPinIndex);
+      renderCard(window.pins.adsData, clickedPinIndex);
 
-      var adCardClose = mapElement.querySelector('.popup__close');
-      adCardClose.addEventListener('click', window.popup.closeAdCard);
+      var cardCloseElement = mapElement.querySelector('.popup__close');
+      cardCloseElement.addEventListener('click', window.popup.close);
       document.addEventListener('keydown', onAdCardEscPress);
     },
 
     // Закрывает попап с карточкой объявления, удаляет обработчик на закрытие попапа по esc
-    closeAdCard: function () {
-      var adCard = mapElement.querySelector('.map__card');
-      if (adCard) {
-        adCard.parentNode.removeChild(adCard);
+    close: function () {
+      var cardElement = mapElement.querySelector('.map__card');
+      if (cardElement) {
+        cardElement.parentNode.removeChild(cardElement);
         document.removeEventListener('keydown', onAdCardEscPress);
       }
     }

@@ -5,72 +5,68 @@
   var PINS_COUNT = 5;
 
   var mapElement = document.querySelector('.map');
-  var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
-  var mapPinsElement = mapElement.querySelector('.map__pins');
-  var mapPinMain = mapElement.querySelector('.map__pin--main');
+  var pinTemplateElement = document.querySelector('template').content.querySelector('.map__pin');
+  var pinsElement = mapElement.querySelector('.map__pins');
 
   // Создает DOM-элемент пина на основе шаблона пина и элемента из массива объявлений
   var createPinElement = function (advertisement, pinIndex) {
-    var pinElement = pinTemplate.cloneNode(true);
-    var pinImage = pinElement.querySelector('img');
-    pinElement.style.left = (advertisement.location.x - (pinImage.width / 2)) + 'px';
-    pinElement.style.top = (advertisement.location.y - pinImage.height) + 'px';
-    pinImage.src = advertisement.author.avatar;
-    pinImage.alt = advertisement.offer.title;
+    var pinElement = pinTemplateElement.cloneNode(true);
+    var pinImageElement = pinElement.querySelector('img');
+    pinElement.style.left = (advertisement.location.x - (pinImageElement.width / 2)) + 'px';
+    pinElement.style.top = (advertisement.location.y - pinImageElement.height) + 'px';
+    pinImageElement.src = advertisement.author.avatar;
+    pinImageElement.alt = advertisement.offer.title;
     pinElement.setAttribute('id', pinIndex + 'ad-pin');
     return pinElement;
   };
 
+  // Отрисовывает сгенерированные DOM-элементы пинов в блок .map__pins
+  var renderPins = function (advertisements) {
+    var fragment = document.createDocumentFragment();
+    advertisements.forEach(function (advertisement, i) {
+      fragment.appendChild(createPinElement(advertisement, i));
+    });
+    pinsElement.appendChild(fragment);
+
+    addPinsClickHandlers();
+  };
+
   // Добавляет на все пины, кроме метки-кекса, обработчики, открывающие попап с карточой объявления
   var addPinsClickHandlers = function () {
-    var pins = mapPinsElement.querySelectorAll('.map__pin');
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].addEventListener('click', window.popup.openAdCard);
-    }
-    mapPinMain.removeEventListener('click', window.popup.openAdCard);
+    var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+    pinElements.forEach(function (pin) {
+      pin.addEventListener('click', window.popup.open);
+    });
   };
 
   window.pins = {
     // В этот массив добавляются загруженные с сервера данные объявлений
     adsData: [],
 
-    // Отрисовывает сгенерированные DOM-элементы пинов в блок .map__pins
-    renderMapPins: function (advertisements) {
-      var fragment = document.createDocumentFragment();
-      for (var i = 0; i < advertisements.length; i++) {
-        fragment.appendChild(createPinElement(advertisements[i], i));
-      }
-      mapPinsElement.appendChild(fragment);
-
-      addPinsClickHandlers();
-    },
-
     // Удаляет элементы пинов
-    deletePins: function () {
-      var pins = mapPinsElement.querySelectorAll('.map__pin');
-      pins.forEach(function (item) {
-        if (item.id) {
-          item.parentNode.removeChild(item);
-        }
+    delete: function () {
+      var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+      pinElements.forEach(function (pin) {
+        pin.parentNode.removeChild(pin);
       });
     },
 
     // Прячет пины при фильтрации
-    hidePins: function () {
-      var pins = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
-      pins.forEach(function (pin) {
+    hide: function () {
+      var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+      pinElements.forEach(function (pin) {
         pin.classList.add('hidden');
       });
     },
 
     // Отображает пины при фильтрации
-    showPins: function (showedAds, originalAds) {
-      var pins = mapPinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+    show: function (showedAds, originalAds) {
+      var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
       if (showedAds.length > PINS_COUNT) {
         showedAds = showedAds.slice(0, PINS_COUNT);
       }
       showedAds.forEach(function (ad) {
-        pins.forEach(function (pin) {
+        pinElements.forEach(function (pin) {
           var pinIndex = parseInt(pin.getAttribute('id'), 10);
           if (originalAds.indexOf(ad) === pinIndex) {
             pin.classList.remove('hidden');
@@ -81,10 +77,10 @@
 
     // Сохраняет загруженный с сервера массив объявлений, отображает пины
     createdAdsData: function (uploadedAds) {
-      window.pins.renderMapPins(uploadedAds);
+      renderPins(uploadedAds);
       window.pins.adsData = uploadedAds;
-      window.pins.hidePins();
-      window.pins.showPins(window.pins.adsData, window.pins.adsData);
+      window.pins.hide();
+      window.pins.show(window.pins.adsData, window.pins.adsData);
     },
   };
 })();

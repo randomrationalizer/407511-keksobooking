@@ -2,14 +2,14 @@
 'use strict';
 
 (function () {
-  var mapFilter = document.querySelector('.map__filters');
-  var filterTypeElem = mapFilter.querySelector('#housing-type');
-  var filterPriceElem = mapFilter.querySelector('#housing-price');
-  var filterRoomsElem = mapFilter.querySelector('#housing-rooms');
-  var filterGuestsElem = mapFilter.querySelector('#housing-guests');
-  var filterFeaturesElem = mapFilter.querySelector('#housing-features');
-  var filterFeatures = filterFeaturesElem.querySelectorAll('.map__checkbox');
-  var filterSelects = mapFilter.querySelectorAll('select');
+  var mapFiltersElement = document.querySelector('.map__filters');
+  var filterTypeElement = mapFiltersElement.querySelector('#housing-type');
+  var filterPriceElement = mapFiltersElement.querySelector('#housing-price');
+  var filterRoomsElement = mapFiltersElement.querySelector('#housing-rooms');
+  var filterGuestsElement = mapFiltersElement.querySelector('#housing-guests');
+  var filterFeaturesElement = mapFiltersElement.querySelector('#housing-features');
+  var filterFeatureElements = filterFeaturesElement.querySelectorAll('.map__checkbox');
+  var filterSelectElements = mapFiltersElement.querySelectorAll('select');
 
   var defaulFilterValues = {
     'housing-type': 'any',
@@ -35,8 +35,8 @@
     });
   };
 
-  resetFilters(filterSelects);
-  resetFilters(filterFeatures);
+  resetFilters(filterSelectElements);
+  resetFilters(filterFeatureElements);
 
   // Обновляет отображенные на карте пины в зависимости от выбранных условий фильтров
   var updatePins = function () {
@@ -50,13 +50,13 @@
         checkOfferValue(it.offer.guests, selectedGuests);
     });
 
-    window.popup.closeAdCard();
-    window.pins.hidePins();
-    window.pins.showPins(filteredAds, ads);
+    window.popup.close();
+    window.pins.hide();
+    window.pins.show(filteredAds, ads);
   };
 
   // Выбранное значение фильтра цены
-  var selectedPrice = defaulFilterValues[filterPriceElem.id];
+  var selectedPrice = defaulFilterValues[filterPriceElement.id];
 
   // Записывает значение выбранной цены в переменную selectedPrice и обновляет пины
   var onPriceChange = window.util.debounce(function (evt) {
@@ -94,7 +94,7 @@
   };
 
   // Добавляет обработчик события на фильтр цены
-  filterPriceElem.addEventListener('change', onPriceChange);
+  filterPriceElement.addEventListener('change', onPriceChange);
 
   // Массив выбранных в фильтре фич
   var selectedFeatures = [];
@@ -113,17 +113,13 @@
   });
 
   // Условие фильтрации объявлений по фичам
-  var checkOfferFeatures = function (arr, featuresArr) {
+  var checkOfferFeatures = function (adFeatures, filterFeatures) {
     var result;
-    if (featuresArr.length === 0) {
+    if (filterFeatures.length === 0) {
       result = true;
     } else {
-      result = true;
-      featuresArr.forEach(function (item) {
-        var featureIndex = arr.indexOf(item);
-        if (featureIndex < 0) {
-          result = false;
-        }
+      result = filterFeatures.every(function (feature) {
+        return adFeatures.includes(feature);
       });
     }
     return result;
@@ -131,7 +127,7 @@
 
   // Добавляет обработчики события на все чекбоксы фильтра
   var addFilterCheckboxHandlers = function () {
-    filterFeatures.forEach(function (checkbox) {
+    filterFeatureElements.forEach(function (checkbox) {
       checkbox.addEventListener('change', onCheckboxChange);
     });
   };
@@ -144,7 +140,7 @@
   };
 
   // Выбранное значение фильтра типа жилья
-  var selectedType = defaulFilterValues[filterTypeElem.id];
+  var selectedType = defaulFilterValues[filterTypeElement.id];
 
   // Записывает значение выбранного типа жилья в переменную selectedType и обновляет пины
   var onTypeChange = window.util.debounce(function (evt) {
@@ -154,10 +150,10 @@
   });
 
   // Добавляет обработчик события на поле типа жилья
-  filterTypeElem.addEventListener('change', onTypeChange);
+  filterTypeElement.addEventListener('change', onTypeChange);
 
   // Выбранное значение фильтра количества комнат
-  var selectedRooms = defaulFilterValues[filterRoomsElem.id];
+  var selectedRooms = defaulFilterValues[filterRoomsElement.id];
 
   // Записывает значение выбранного количества комнат в переменную selectedRooms и обновляет пины
   var onRoomsChange = window.util.debounce(function (evt) {
@@ -171,15 +167,15 @@
   });
 
   // Добавляет обработчик события на поле числа комнат
-  filterRoomsElem.addEventListener('change', onRoomsChange);
+  filterRoomsElement.addEventListener('change', onRoomsChange);
 
   // Выбранное значение фильтра числа гостей
-  var selectedGuests = defaulFilterValues[filterGuestsElem.id];
+  var selectedGuests = defaulFilterValues[filterGuestsElement.id];
 
   // Записывает значение выбранного числа гостей в переменную selectedRooms и обновляет пины
   var onGuestsChange = window.util.debounce(function (evt) {
     var target = evt.target;
-    if (typeof target.value !== 'number' && target.value !== 'any') {
+    if (target.value !== 'any') {
       selectedGuests = parseInt(target.value, 10);
     } else {
       selectedGuests = target.value;
@@ -188,5 +184,5 @@
   });
 
   // Добавляет обработчик события на поле количества гостей
-  filterGuestsElem.addEventListener('change', onGuestsChange);
+  filterGuestsElement.addEventListener('change', onGuestsChange);
 })();

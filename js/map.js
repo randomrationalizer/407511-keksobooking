@@ -3,7 +3,7 @@
 
 (function () {
   var mapElement = document.querySelector('.map');
-  var mapPinMain = mapElement.querySelector('.map__pin--main');
+  var mainPinElement = mapElement.querySelector('.map__pin--main');
 
   // Активирует карту
   var activateMap = function () {
@@ -18,26 +18,26 @@
   // Переключает страницу в активное состояние
   var activatePage = function () {
     activateMap();
-    window.form.activateForm();
-    window.mainpin.sendMapPinMainCoordinates(true);
+    window.form.activate();
+    window.mainpin.sendCoordinates(true);
     window.backend.load(window.pins.createdAdsData, window.util.showErrorMessage);
-    mapPinMain.removeEventListener('mouseup', activatePage);
+    mainPinElement.removeEventListener('mouseup', activatePage);
   };
 
   // Добавляет на метку-кекс обработчик события (отпускание элемента), активирующий страницу
-  mapPinMain.addEventListener('mouseup', activatePage);
+  mainPinElement.addEventListener('mouseup', activatePage);
 
   window.map = {
     // Переключает страницу в неактивное состояние
     deactivatePage: function () {
       deactivateMap();
-      window.form.deactivateForm();
-      window.mainpin.resetPinMain();
-      window.form.resetAdForm();
-      window.pins.deletePins();
-      window.popup.closeAdCard();
-      window.mainpin.sendMapPinMainCoordinates(false);
-      mapPinMain.addEventListener('mouseup', activatePage);
+      window.form.deactivate();
+      window.mainpin.reset();
+      window.form.reset();
+      window.pins.delete();
+      window.popup.close();
+      window.mainpin.sendCoordinates(false);
+      mainPinElement.addEventListener('mouseup', activatePage);
     }
   };
 
