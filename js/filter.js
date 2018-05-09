@@ -8,8 +8,8 @@
   var filterRoomsElement = mapFiltersElement.querySelector('#housing-rooms');
   var filterGuestsElement = mapFiltersElement.querySelector('#housing-guests');
   var filterFeaturesElement = mapFiltersElement.querySelector('#housing-features');
-  var filterFeatureElements = filterFeaturesElement.querySelectorAll('.map__checkbox');
-  var filterSelectElements = mapFiltersElement.querySelectorAll('select');
+  var filterFeatureElements = [].slice.call(filterFeaturesElement.querySelectorAll('.map__checkbox'));
+  var filterSelectElements = [].slice.call(mapFiltersElement.querySelectorAll('select'));
 
   var defaulFilterValues = {
     'housing-type': 'any',

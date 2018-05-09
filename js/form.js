@@ -3,7 +3,7 @@
 
 (function () {
   var adFormElement = document.querySelector('.ad-form');
-  var adFormElements = adFormElement.querySelectorAll('.ad-form__element');
+  var adFormElements = [].slice.call(adFormElement.querySelectorAll('.ad-form__element'));
   var adFormResetElement = adFormElement.querySelector('.ad-form__reset');
   var adFormAddressElement = adFormElement.querySelector('#address');
   var adFormTitleElement = adFormElement.querySelector('#title');
@@ -14,9 +14,9 @@
   var adFormRoomsElement = adFormElement.querySelector('#room_number');
   var adFormCapacityElement = adFormElement.querySelector('#capacity');
   var adFormDescriptionElement = adFormElement.querySelector('#description');
-  var adFormCheckboxElements = adFormElement.querySelectorAll('checkbox');
-  var adFormInputElements = adFormElement.querySelectorAll('input');
-  var adFormSelectElements = adFormElement.querySelectorAll('select');
+  var adFormCheckboxElements = [].slice.call(adFormElement.querySelectorAll('checkbox'));
+  var adFormInputElements = [].slice.call(adFormElement.querySelectorAll('input'));
+  var adFormSelectElements = [].slice.call(adFormElement.querySelectorAll('select'));
   var successMsgElement = document.querySelector('.success');
 
   // Значения полей формы по умолчанию

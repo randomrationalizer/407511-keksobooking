@@ -32,7 +32,7 @@
       adElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + advertisement.offer.checkin + ' , выезд до ' + advertisement.offer.checkout;
 
       var featuresBlockElement = adElement.querySelector('.popup__features');
-      var featureElements = featuresBlockElement.querySelectorAll('.popup__feature');
+      var featureElements = [].slice.call(featuresBlockElement.querySelectorAll('.popup__feature'));
 
       advertisement.offer.features.forEach(function (offerFeature) {
         featuresBlockElement.querySelector(featureToClassName[offerFeature]).textContent = offerFeature;

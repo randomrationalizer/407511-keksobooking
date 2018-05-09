@@ -33,7 +33,7 @@
 
   // Добавляет на все пины, кроме метки-кекса, обработчики, открывающие попап с карточой объявления
   var addPinsClickHandlers = function () {
-    var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+    var pinElements = [].slice.call(pinsElement.querySelectorAll('.map__pin:not(.map__pin--main'));
     pinElements.forEach(function (pin) {
       pin.addEventListener('click', window.popup.open);
     });
@@ -45,7 +45,7 @@
 
     // Удаляет элементы пинов
     delete: function () {
-      var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+      var pinElements = [].slice.call(pinsElement.querySelectorAll('.map__pin:not(.map__pin--main'));
       pinElements.forEach(function (pin) {
         pin.parentNode.removeChild(pin);
       });
@@ -53,7 +53,7 @@
 
     // Прячет пины при фильтрации
     hide: function () {
-      var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+      var pinElements = [].slice.call(pinsElement.querySelectorAll('.map__pin:not(.map__pin--main'));
       pinElements.forEach(function (pin) {
         pin.classList.add('hidden');
       });
@@ -61,7 +61,7 @@
 
     // Отображает пины при фильтрации
     show: function (showedAds, originalAds) {
-      var pinElements = pinsElement.querySelectorAll('.map__pin:not(.map__pin--main');
+      var pinElements = [].slice.call(pinsElement.querySelectorAll('.map__pin:not(.map__pin--main'));
       if (showedAds.length > PINS_COUNT) {
         showedAds = showedAds.slice(0, PINS_COUNT);
       }
